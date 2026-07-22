@@ -1,22 +1,43 @@
 {
   "name": "photospot",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
+    "@gorhom/bottom-sheet": "^5.2.14",
+    "@mj-studio/react-native-naver-map": "^2.9.0",
+    "@tanstack/react-query": "^5.101.2",
     "expo": "~57.0.7",
+    "expo-constants": "~57.0.6",
+    "expo-font": "~57.0.1",
+    "expo-linking": "~57.0.3",
+    "expo-location": "~57.0.5",
+    "expo-notifications": "~57.0.6",
+    "expo-router": "~57.0.7",
+    "expo-splash-screen": "~57.0.4",
     "expo-status-bar": "~57.0.1",
+    "expo-task-manager": "~57.0.5",
     "react": "19.2.3",
-    "react-native": "0.86.0"
+    "react-native": "0.86.0",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.0",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "4.25.2",
+    "react-native-worklets": "0.10.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "babel-preset-expo": "^57.0.3",
+    "dotenv": "^17.4.2",
     "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 RUBYOPT=-Eutf-8:utf-8 expo run:android",
+    "ios": "LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 RUBYOPT=-Eutf-8:utf-8 expo run:ios",
+    "web": "expo start --web",
+    "type-check": "tsc --noEmit"
   },
   "private": true
 }
