@@ -2,7 +2,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MOCK_SPOTS } from '../../data/mockSpots';
+import { getApprovedSpots } from '../../data/mockSpots';
 import { MOCK_WEATHER } from '../../data/mockWeather';
 import { getThemeMeta } from '../../constants/themes';
 import { scoreWeather } from '../../lib/recommendation';
@@ -15,7 +15,7 @@ import { spacing, fontSize, radius } from '../../constants/typography';
 
 export default function SpotDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const spot = MOCK_SPOTS.find((s) => s.id === id);
+  const spot = getApprovedSpots().find((s) => s.id === id);
   const weather = spot ? MOCK_WEATHER[spot.id] : undefined;
 
   if (!spot) {

@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEMES } from '../../constants/themes';
 import { usePreferenceStore } from '../../store/preferenceStore';
 import { requestGeofencePermissions, syncGeofences } from '../../lib/geofencing';
-import { MOCK_SPOTS } from '../../data/mockSpots';
+import { getApprovedSpots } from '../../data/mockSpots';
 import { colors } from '../../constants/colors';
 import { spacing, fontSize, radius as radiusToken } from '../../constants/typography';
 
@@ -22,9 +22,9 @@ export default function SettingsScreen() {
   } = usePreferenceStore();
   const [syncing, setSyncing] = useState(false);
 
-  const subscribedSpotIds = MOCK_SPOTS.filter((s) =>
-    s.themes.some((t) => subscribedThemes.includes(t))
-  ).map((s) => s.id);
+  const subscribedSpotIds = getApprovedSpots()
+    .filter((s) => s.themes.some((t) => subscribedThemes.includes(t)))
+    .map((s) => s.id);
 
   const handleToggleNotifications = async (value: boolean) => {
     if (value) {

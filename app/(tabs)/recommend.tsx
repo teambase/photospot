@@ -3,7 +3,7 @@ import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MOCK_SPOTS } from '../../data/mockSpots';
+import { getApprovedSpots } from '../../data/mockSpots';
 import { MOCK_WEATHER } from '../../data/mockWeather';
 import { THEMES } from '../../constants/themes';
 import { ThemeChip } from '../../components/ThemeChip';
@@ -44,7 +44,7 @@ export default function RecommendScreen() {
   };
 
   const results = useMemo(() => {
-    return MOCK_SPOTS.map((spot) => {
+    return getApprovedSpots().map((spot) => {
       const weather = MOCK_WEATHER[spot.id];
       const dist = distanceKm(origin.lat, origin.lng, spot.lat, spot.lng);
       const score = weather ? scoreWeather(weather) : null;

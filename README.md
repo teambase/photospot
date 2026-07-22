@@ -61,6 +61,8 @@ data/                목업 스팟/날씨 데이터
 lib/                 추천 점수, 카메라 세팅, 지오펜싱, 거리 계산 로직
 store/               Zustand 스토어
 types/               공용 타입
+admin/               스팟 승인 관리 웹 대시보드 (Vite + React + Firebase, 별도 앱 — admin/README.md 참고)
+firestore.rules      Firebase Firestore 보안 규칙 (admin과 앱이 공유하는 Firebase 프로젝트에 적용)
 ```
 
 ## 디자인

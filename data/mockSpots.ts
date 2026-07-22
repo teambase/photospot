@@ -12,6 +12,8 @@ export const MOCK_SPOTS: Spot[] = [
     azimuthNote: '전망대 북측에서 광화문 방향 야경 촬영 유리',
     region: '서울 용산구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'naksan-park',
@@ -23,6 +25,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '평일 저녁 8시 이후 한적함',
     region: '서울 종로구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'seokchon-lake',
@@ -34,6 +38,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '개화 절정기 오전 이른 시간, 인파 적을 때',
     region: '서울 송파구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'yeouido-yunjungro',
@@ -45,6 +51,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '해 질 무렵 역광 활용 시 꽃잎이 화사하게 나옴',
     region: '서울 영등포구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'naejangsan',
@@ -56,6 +64,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '단풍 절정기 오전 안개가 걷힌 직후',
     region: '전북 정읍시',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'nami-island',
@@ -67,6 +77,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '늦가을 새벽, 강변 안개 발생 확률 높음',
     region: '강원 춘천시',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'jeongdongjin',
@@ -79,6 +91,8 @@ export const MOCK_SPOTS: Spot[] = [
     azimuthNote: '동쪽 수평선 정면 개방, 방해물 없음',
     region: '강원 강릉시',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'seongsan-ilchulbong',
@@ -90,6 +104,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '일출 1시간 전 입산해 능선에서 대기',
     region: '제주 서귀포시',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'eulwangri-beach',
@@ -101,6 +117,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '일몰 15분 전후, 썰물 시간대에 갯벌 반영샷 가능',
     region: '인천 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'yeongwol-donggang',
@@ -112,6 +130,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '신월 전후 무월광 밤, 자정~새벽 3시',
     region: '강원 영월군',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'hangang-banpo',
@@ -124,6 +144,8 @@ export const MOCK_SPOTS: Spot[] = [
     azimuthNote: '반포대교 남측 공원에서 북쪽 방향 촬영',
     region: '서울 서초구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'hangang-mapo',
@@ -135,6 +157,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 7시~8시경 블루아워',
     region: '서울 마포구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'hangang-yeouido',
@@ -146,6 +170,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '봄 오전 9시~11시, 여름 일몰 1시간 전',
     region: '서울 영등포구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'hangang-gangbyeok',
@@ -157,6 +183,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 8시~9시경 야경 최적',
     region: '서울 강북구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'gyeongbokgung-palace',
@@ -168,6 +196,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '야간 개방 시간(평일 저녁 9시까지)',
     region: '서울 종로구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'deoksugung-palace',
@@ -179,6 +209,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 6시 이후, 조명이 켜지는 시간대',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'bukchon-hanok',
@@ -190,6 +222,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '해질녘 또는 새벽, 관광객 적을 때',
     region: '서울 종로구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'insadong-street',
@@ -201,6 +235,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '오전 10시~11시, 가게들이 오픈하는 시간대',
     region: '서울 종로구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'cheonggyecheon',
@@ -212,6 +248,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 8시~9시, 건너편 상가 조명과 함께',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'myeongdong-street',
@@ -223,6 +261,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 7시~9시, 거리 조명 최고조',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'seoul-station-bridge',
@@ -234,6 +274,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 7시~8시경, 기차 운행 시간대',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'gangnam-station',
@@ -245,6 +287,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 8시~9시, 건물 조명 최고조',
     region: '서울 강남구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'lotte-world-tower',
@@ -256,6 +300,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 7시~8시경 블루아워',
     region: '서울 송파구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'dongdaemun-design-plaza',
@@ -267,6 +313,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '해질녘부터 밤 10시경까지',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'hongdae-street',
@@ -278,6 +326,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '오후 3시~5시경 역광 활용, 저녁 조명',
     region: '서울 마포구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'itaewon-street',
@@ -289,6 +339,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '저녁 7시~9시',
     region: '서울 용산구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'boramae-park',
@@ -300,6 +352,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '해질녘 30분 전부터, 블루아워',
     region: '서울 동작구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'sungnyemun-gate',
@@ -311,6 +365,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '일몰 후 1시간, 조명 점등 시간',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'dongdaemun-shopping',
@@ -322,6 +378,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '야간 9시~자정, 상인들의 활동과 조명',
     region: '서울 중구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'gangdong-riverfrontwalk',
@@ -333,6 +391,8 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '여름 일몰 시간, 8시경',
     region: '서울 강동구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
   {
     id: 'gwacheon-mount',
@@ -344,5 +404,12 @@ export const MOCK_SPOTS: Spot[] = [
     bestTimeNote: '일몰 30분 전, 블루아워',
     region: '서울 관악구',
     images: [],
+    status: 'approved',
+    source: 'manual',
   },
 ];
+
+/** 앱에는 관리자 승인(status: 'approved')된 스팟만 노출한다. 향후 Firestore 쿼리로 대체될 지점. */
+export function getApprovedSpots(): Spot[] {
+  return MOCK_SPOTS.filter((spot) => spot.status === 'approved');
+}

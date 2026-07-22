@@ -5,7 +5,7 @@ import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
-import { MOCK_SPOTS } from '../../data/mockSpots';
+import { getApprovedSpots } from '../../data/mockSpots';
 import { MOCK_WEATHER } from '../../data/mockWeather';
 import { THEMES } from '../../constants/themes';
 import { useMapFilterStore } from '../../store/mapFilterStore';
@@ -30,8 +30,9 @@ export default function MapScreen() {
   const userLocationRef = useRef<{ latitude: number; longitude: number } | null>(null);
 
   const visibleSpots = useMemo(() => {
-    if (activeThemes.length === 0) return MOCK_SPOTS;
-    return MOCK_SPOTS.filter((s) => s.themes.some((t) => activeThemes.includes(t)));
+    const approvedSpots = getApprovedSpots();
+    if (activeThemes.length === 0) return approvedSpots;
+    return approvedSpots.filter((s) => s.themes.some((t) => activeThemes.includes(t)));
   }, [activeThemes]);
 
   const openSpot = useCallback((spot: Spot) => {

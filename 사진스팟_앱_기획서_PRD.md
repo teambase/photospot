@@ -19,9 +19,10 @@
 | 바람 조언 (3.5, 신규) | ✅ 구현 — 원 PRD에 없던 기능, 개발 중 추가 |
 | 실데이터 연동 (기상청/천문연구원/TourAPI/에어코리아) | ⬜ 미착수 — 목업 데이터로 대체 중 |
 | 지도 SDK 선택 | ✅ 확정 — 네이버 지도 |
-| 백엔드(Firebase 등) | ⬜ 미착수 — **DB + 관리시스템 도입으로 방향 확정**, 구체 스택은 TBD |
+| 백엔드 | ✅ 확정 — **Firebase (Firestore + Auth)**. 프로젝트는 신규 생성 필요(사용자 액션 대기), 연동 코드는 아직 mock 기준 |
+| 관리시스템(어드민) | 🟡 코드 구현 완료(`admin/`, Vite+React+Firebase), 실제 Firebase 프로젝트 연결·데이터 이관 전이라 미검증 |
 | 스팟 발굴 소스 | ✅ 확정 — data.go.kr 전국 표준데이터셋 우선 적용 (5. 데이터 소스 참고) |
-| 스팟 노출 승인 워크플로우 | ⬜ 미착수 — 수집된 스팟은 관리자 승인 전까지 앱에 비노출(설계만 반영, 3.6 참고) |
+| 스팟 노출 승인 워크플로우 | 🟡 앱 쪽 `status`/`source` 필드·`getApprovedSpots()` 필터링 반영 완료, 실제 DB 연동·어드민 승인 액션 검증은 미완 (3.6 참고) |
 | 전국 스팟 확장 | ⬜ 서울/수도권 중심 31곳만 등록 |
 
 ---
@@ -89,15 +90,15 @@ v1은 규칙 테이블 기반으로 시작하고, 추후 사용자 촬영 데이
 
 구현: `lib/windAdvice.ts`(`getWindTip`), `app/spot/[id].tsx`에서 사용. 풍속(`windSpeedMs`) 구간별 4단계 조언이며, 데이터 소스는 아직 목업(`WeatherSnapshot.windSpeedMs`)이라 기상청 API 연동 시 실데이터로 교체 필요.
 
-### 3.6 스팟 데이터 파이프라인 & 관리자 승인 ⬜ 설계 확정, 미착수 *(개발 중 추가)*
+### 3.6 스팟 데이터 파이프라인 & 관리자 승인 🟡 부분 구현 *(개발 중 추가)*
 스팟을 "자동 수집 → 관리자 검토 → 승인" 3단계로 관리한다. 자동 수집만으로 앱에 바로 노출하지 않고, **관리자가 승인한 스팟만 지도·추천 리스트에 노출**되도록 한다.
 
-- **수집**: data.go.kr 전국 표준데이터셋(5. 데이터 소스 참고)에서 후보 스팟을 가져와 `status: 'pending'`으로 DB에 저장
-- **검토/승인**: 관리시스템(백오피스)에서 관리자가 후보를 확인 후 `approved` 또는 `rejected`로 전환. 필요 시 테마·설명·대표 사진 등 메타데이터를 보정
-- **노출**: 앱(지도 3.1, 추천 3.2, 지오펜싱 3.3 등록 대상)은 `status: 'approved'`인 스팟만 조회
+- **수집**: data.go.kr 전국 표준데이터셋(5. 데이터 소스 참고)에서 후보 스팟을 가져와 `status: 'pending'`으로 DB에 저장 — ⬜ 미구현
+- **검토/승인**: 관리시스템(백오피스)에서 관리자가 후보를 확인 후 `approved` 또는 `rejected`로 전환 — ✅ `admin/`(Vite+React+Firebase Auth/Firestore) 웹 대시보드 코드 구현 완료. 관리자는 구글 로그인(이메일 allowlist) 후 승인 대기/승인됨/반려됨 탭에서 상태를 전환
+- **노출**: 앱(지도 3.1, 추천 3.2, 지오펜싱 3.3 등록 대상)은 `status: 'approved'`인 스팟만 조회 — ✅ `data/mockSpots.ts`의 `getApprovedSpots()`로 필터링 완료, 모든 화면이 이 함수를 거치도록 전환됨
 - 사용자 제보(UGC)와는 다른 개념이다 — UGC는 4장에서 여전히 v1 범위 밖이며, 이 파이프라인은 관리자가 공공데이터를 큐레이션하는 반자동 프로세스다
 
-현재는 방향만 확정된 상태이고, DB·관리시스템·수집 배치 모두 미구현이다 (6. 기술 스택, 7. 데이터 모델, 8. 로드맵 참고).
+현재 남은 일: (1) 실제 Firebase 프로젝트 생성 및 `admin/.env` 연결 — 사용자 액션 필요(구글 로그인 필요해 대행 불가, `admin/README.md`에 단계별 가이드 있음), (2) 앱 쪽을 `data/mockSpots.ts`에서 Firestore 쿼리로 전환, (3) data.go.kr 수집 배치 작성. 6. 기술 스택, 7. 데이터 모델, 8. 로드맵 참고.
 
 ## 4. MVP 제외 기능 (v2 이후 고려)
 
@@ -131,7 +132,8 @@ API 키 4종 모두 `.env.example`에 변수명은 정의해뒀으나(`README.md
 
 - 클라이언트: **React Native + Expo(프리빌드 방식)** + TypeScript, **Expo Router**(파일 기반 라우팅) — Flutter 대신 확정
 - 상태 관리: **Zustand** (`store/mapFilterStore.ts`, `store/preferenceStore.ts`), 서버 상태: **TanStack Query** (의존성만 설치, 실 API 연동 전이라 아직 미사용)
-- 백엔드: **방향만 확정, 구현은 미착수.** 스팟 데이터를 DB화하고 관리자 승인 워크플로우(3.6)를 갖춘 관리시스템(백오피스)을 둔다는 방향은 정했으나, Firebase vs 자체 서버 등 구체 스택 선택은 아직 (9. 미해결 이슈). 현재는 서버 없이 클라이언트 로컬 상태 + 목업 데이터로만 동작
+- 백엔드: **Firebase(Firestore + Auth)로 확정.** Firestore로 스팟 DB, Firebase Auth(Google 로그인 + 이메일 allowlist)로 관리자 인증. 실제 Firebase 프로젝트는 아직 생성 전(구글 계정 로그인이 필요해 사용자가 직접 진행, `admin/README.md`에 단계별 가이드) — 그 전까지 앱은 `data/mockSpots.ts` 목업으로 동작
+- 관리시스템(어드민): **Vite + React SPA** (`admin/`), Firebase JS SDK로 Firestore 직접 호출 — 별도 백엔드 서버 없이 클라이언트에서 승인/반려 처리. `firestore.rules`(저장소 루트)로 "앱은 approved만 읽기 / 어드민은 전체 읽기·쓰기" 접근 제어
 - 지도: **네이버 지도 SDK** (`@mj-studio/react-native-naver-map`) — Google Maps 대신 국내 정확도 우선으로 확정
 - 위치/지오펜싱: `expo-location` + `expo-task-manager` (iOS Region Monitoring / Android Geofencing을 Expo가 래핑)
 - 알림: `expo-notifications` (현재는 로컬 알림만; 서버 푸시(FCM 등)는 백엔드 도입 후 검토)
@@ -140,9 +142,9 @@ API 키 4종 모두 `.env.example`에 변수명은 정의해뒀으나(`README.md
 
 ## 7. 데이터 모델 (구현 반영)
 
-**Spot** (`types/spot.ts`, 현재 구현 기준 — 아래 승인 관련 필드는 3.6 설계에 따른 예정 변경사항)
-- 현재: `id, name, lat, lng, themes: ThemeId[], description, bestTimeNote, azimuthNote?, region, images: string[]`
-- **추가 예정** (3.6 관리자 승인 워크플로우용, 미구현): `status: 'pending' | 'approved' | 'rejected'`, `source: 'data.go.kr' | 'tourapi' | 'manual'` — 초안에 있던 `sourceType`이 이 형태로 부활. 앱 조회 쿼리는 `status === 'approved'`만 필터링해야 함
+**Spot** (`types/spot.ts`)
+- `id, name, lat, lng, themes: ThemeId[], description, bestTimeNote, azimuthNote?, region, images: string[], status: SpotStatus, source: SpotSource`
+- `SpotStatus = 'pending' | 'approved' | 'rejected'`, `SpotSource = 'manual' | 'data-go-kr'` — 초안에 있던 `sourceType`이 이 형태로 부활. 앱은 `data/mockSpots.ts`의 `getApprovedSpots()`(=`status === 'approved'` 필터)로만 스팟을 조회하도록 전환 완료 — 지도(3.1)·추천(3.2)·지오펜싱 등록(3.3)·상세(spot/[id])·설정의 구독 스팟 계산까지 전부 이 함수를 거침. 목업 31곳은 전부 `status: 'approved', source: 'manual'`
 
 **WeatherSnapshot** (`types/spot.ts`)
 - `spotId, date, sky('맑음'|'구름많음'|'흐림'), precipitationChance, cloudCoverPercent, dustGrade('좋음'|'보통'|'나쁨'|'매우나쁨'), sunriseTime, sunsetTime, moonPhase, windSpeedMs, windDirection, updatedAt`
@@ -163,11 +165,21 @@ API 키 4종 모두 `.env.example`에 변수명은 정의해뒀으나(`README.md
 2. ~~날씨/천문 데이터 오버레이~~ → **목업으로 대체 구현**, 조건 기반 추천 리스트 ✅ *(2단계: 사실상 완료, 데이터만 목업)*
 3. 카메라 세팅 조언 규칙 엔진 ✅ **완료**
 4. 지오펜싱 푸시 알림 ✅ **로직 완료** (실기기 검증 대기)
-5. 전국 스팟 확장, UI 폴리싱 ⬜ **미착수** — 아래 5-A/5-B로 세분화
-   - 5-A. DB 도입 + 관리시스템(백오피스) 구축 — 스팟 CRUD, `pending/approved/rejected` 승인 큐 ⬜ 미착수
+5. 전국 스팟 확장, UI 폴리싱 🟡 **진행 중** — 아래 5-A/5-B로 세분화
+   - 5-A. DB 도입 + 관리시스템(백오피스) 구축 — 스팟 CRUD, `pending/approved/rejected` 승인 큐 🟡 코드 구현 완료(`admin/`), Firebase 프로젝트 생성·연결은 대기 중
    - 5-B. data.go.kr 표준데이터셋 수집 배치 구축 → `pending`으로 적재 → 관리자 승인 → 앱 노출 (3.6) ⬜ 미착수
 
-**다음 단계 제안:** 1·2단계에 남은 실데이터 연동(기상청/천문연구원/에어코리아/TourAPI 키 발급 및 서비스 레이어 추가)을 마무리한 뒤, 5단계(전국 확장)로 넘어가는 순서를 권장. 5단계는 백엔드가 없으면 시작할 수 없으므로 5-A(DB+관리시스템)를 먼저 착수하고, 5-B(수집 배치)는 그 위에 얹는 순서를 권장.
+**진행 순서 (2026-07-22 기준):**
+1. ~~백엔드/DB 기술 선택~~ ✅ Firebase로 확정
+2. ~~Spot 데이터 모델에 status/source 반영~~ ✅ 완료
+3. 관리시스템 최소 기능(목록·승인·반려) ✅ 코드 구현 완료, 실제 Firebase 프로젝트 연결 전이라 미검증
+4. data.go.kr 수집 배치 작성 ⬜ 다음 순서
+5. 앱 데이터 소스를 mock → Firestore로 전환 ⬜ Firebase 프로젝트 생성 후 진행
+6. 지오펜싱 등록 로직 회귀 확인 ⬜ 5번 이후
+7. 기상청/천문연구원/에어코리아 API 연동 (병행 가능) ⬜
+8. 실기기 지오펜싱 배터리·정확도 테스트 ⬜ 스팟 수가 늘어난 뒤가 의미 있음
+
+**현재 블로커:** Firebase 프로젝트 생성은 구글 계정 로그인이 필요해 사용자가 직접 진행해야 함 (`admin/README.md` 1절 참고). 프로젝트 생성 후 `firebaseConfig` 값을 `admin/.env`에 채우면 4~5번으로 이어갈 수 있음.
 
 ## 9. 미해결 이슈 (2026-07-22 기준)
 

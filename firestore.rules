@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      // admin/.env의 VITE_ADMIN_EMAILS와 동일하게 유지할 것.
+      // 관리자를 추가/제거하면 이 목록도 함께 갱신해야 한다.
+      return request.auth != null &&
+        request.auth.token.email in ['you@example.com'];
+    }
+
+    match /spots/{spotId} {
+      // 앱(비로그인 사용자)은 승인된 스팟만 읽을 수 있다.
+      // 관리자는 상태와 무관하게 전부 읽을 수 있다 (승인 대기 목록 확인용).
+      allow read: if resource.data.status == 'approved' || isAdmin();
+
+      // 수집 배치는 Firebase Admin SDK(서비스 계정)로 쓰기 때문에 이 규칙을 우회한다.
+      // 클라이언트에서의 쓰기는 관리자(어드민 웹)만 허용.
+      allow write: if isAdmin();
+    }
+  }
+}

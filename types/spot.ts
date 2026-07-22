@@ -1,5 +1,8 @@
 import type { ThemeId } from '../constants/colors';
 
+export type SpotStatus = 'pending' | 'approved' | 'rejected';
+export type SpotSource = 'manual' | 'data-go-kr';
+
 export interface Spot {
   id: string;
   name: string;
@@ -11,6 +14,10 @@ export interface Spot {
   azimuthNote?: string;
   region: string;
   images: string[];
+  /** 관리자 승인 상태. 앱에는 'approved' 스팟만 노출된다 (getApprovedSpots 참고). */
+  status: SpotStatus;
+  /** 스팟 출처. 'manual'은 초기 수기 큐레이션, 'data-go-kr'은 공공데이터 자동 수집분. */
+  source: SpotSource;
 }
 
 export interface WeatherSnapshot {
