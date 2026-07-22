@@ -7,7 +7,7 @@ service cloud.firestore {
       // admin/.env의 VITE_ADMIN_EMAILS와 동일하게 유지할 것.
       // 관리자를 추가/제거하면 이 목록도 함께 갱신해야 한다.
       return request.auth != null &&
-        request.auth.token.email in ['you@example.com'];
+        request.auth.token.email in ['teambase@gmail.com'];
     }
 
     match /spots/{spotId} {

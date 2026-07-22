@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { setSpotStatus, subscribeToSpots } from '../lib/spots';
+import { seedSpotsFromMock, setSpotStatus, subscribeToSpots } from '../lib/spots';
 import type { Spot, SpotStatus } from '../types';
 
 const TABS: { id: SpotStatus; label: string }[] = [
@@ -14,8 +14,24 @@ export function SpotDashboard({ email }: { email: string }) {
   const [spots, setSpots] = useState<Spot[]>([]);
   const [tab, setTab] = useState<SpotStatus>('pending');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [seeding, setSeeding] = useState(false);
+  const [seedMessage, setSeedMessage] = useState<string | undefined>();
 
   useEffect(() => subscribeToSpots(setSpots), []);
+
+  const handleSeed = async () => {
+    setSeeding(true);
+    setSeedMessage(undefined);
+    try {
+      const count = await seedSpotsFromMock();
+      setSeedMessage(`${count}개 스팟을 가져왔습니다.`);
+    } catch (err) {
+      const e = err as { code?: string; message?: string };
+      setSeedMessage(`실패: ${e.code ?? ''} ${e.message ?? String(err)}`.trim());
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   const visibleSpots = useMemo(() => spots.filter((s) => s.status === tab), [spots, tab]);
 
@@ -37,6 +53,16 @@ export function SpotDashboard({ email }: { email: string }) {
           <button onClick={() => signOut(auth)}>로그아웃</button>
         </div>
       </header>
+
+      {spots.length === 0 && (
+        <p className="seed-hint">
+          Firestore에 스팟이 없습니다.{' '}
+          <button onClick={handleSeed} disabled={seeding}>
+            {seeding ? '가져오는 중...' : 'mock 데이터 가져오기 (최초 1회)'}
+          </button>
+          {seedMessage && <span> — {seedMessage}</span>}
+        </p>
+      )}
 
       <nav className="tabs">
         {TABS.map((t) => (
