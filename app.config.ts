@@ -18,6 +18,7 @@ const FIREBASE_CONFIG = {
 const config: ExpoConfig = {
   name: '포토스팟',
   slug: 'photospot',
+  owner: 'teambase',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -25,13 +26,13 @@ const config: ExpoConfig = {
   scheme: 'photospot',
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.photospot.app',
+    bundleIdentifier: 'com.teambase.photospot',
     infoPlist: {
       UIBackgroundModes: ['location'],
     },
   },
   android: {
-    package: 'com.photospot.app',
+    package: 'com.teambase.photospot',
     adaptiveIcon: {
       backgroundColor: '#000000',
       foregroundImage: './assets/android-icon-foreground.png',
@@ -85,6 +86,9 @@ const config: ExpoConfig = {
     kmaApiKey: KMA_API_KEY,
     kasiApiKey: KASI_API_KEY,
     airkoreaApiKey: AIRKOREA_API_KEY,
+    eas: {
+      projectId: 'ab6cff0c-39ea-45b4-b296-409c724bfdca',
+    },
   },
 };
 
