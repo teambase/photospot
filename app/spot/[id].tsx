@@ -42,26 +42,23 @@ export default function SpotDetailScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.themeRow}>
-          {spot.themes.map((tid) => {
-            const t = getThemeMeta(tid);
-            return (
-              <View key={tid} style={styles.themeBadge}>
-                <Ionicons name={t.icon} size={13} color={t.color} />
-                <Text style={styles.themeBadgeText}>{t.label}</Text>
-              </View>
-            );
-          })}
+        <View style={styles.headerRow}>
+          <View style={styles.themeRow}>
+            {spot.themes.map((tid) => {
+              const t = getThemeMeta(tid);
+              return (
+                <View key={tid} style={styles.themeBadge}>
+                  <Ionicons name={t.icon} size={13} color={t.color} />
+                  <Text style={styles.themeBadgeText}>{t.label}</Text>
+                </View>
+              );
+            })}
+          </View>
+          {score && <ScoreBadge score={score.score} label={score.label} />}
         </View>
 
         <Text style={styles.name}>{spot.name}</Text>
         <Text style={styles.region}>{spot.region}</Text>
-
-        {score && (
-          <View style={{ marginTop: spacing.sm }}>
-            <ScoreBadge score={score.score} label={score.label} />
-          </View>
-        )}
 
         <Text style={styles.description}>{spot.description}</Text>
 
@@ -146,7 +143,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: { paddingHorizontal: spacing.xl, paddingBottom: spacing.xxl },
-  themeRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+  },
+  themeRow: { flex: 1, flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
   themeBadge: {
     flexDirection: 'row',
     alignItems: 'center',

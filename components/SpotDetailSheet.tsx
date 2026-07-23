@@ -24,26 +24,23 @@ export function SpotDetailSheet({ spot, weather }: Props) {
 
   return (
     <BottomSheetView style={styles.container}>
-      <View style={styles.themeRow}>
-        {spot.themes.map((id) => {
-          const t = getThemeMeta(id);
-          return (
-            <View key={id} style={styles.themeBadge}>
-              <Ionicons name={t.icon} size={13} color={t.color} />
-              <Text style={styles.themeBadgeText}>{t.label}</Text>
-            </View>
-          );
-        })}
+      <View style={styles.headerRow}>
+        <View style={styles.themeRow}>
+          {spot.themes.map((id) => {
+            const t = getThemeMeta(id);
+            return (
+              <View key={id} style={styles.themeBadge}>
+                <Ionicons name={t.icon} size={13} color={t.color} />
+                <Text style={styles.themeBadgeText}>{t.label}</Text>
+              </View>
+            );
+          })}
+        </View>
+        {score && <ScoreBadge score={score.score} label={score.label} />}
       </View>
 
       <Text style={styles.name}>{spot.name}</Text>
       <Text style={styles.region}>{spot.region}</Text>
-
-      {score && (
-        <View style={{ marginTop: spacing.sm }}>
-          <ScoreBadge score={score.score} label={score.label} />
-        </View>
-      )}
 
       <Text style={styles.description}>{spot.description}</Text>
 
@@ -85,7 +82,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingBottom: spacing.xxl,
   },
-  themeRow: { flexDirection: 'row', gap: spacing.sm },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+  },
+  themeRow: { flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   themeBadge: {
     flexDirection: 'row',
     alignItems: 'center',

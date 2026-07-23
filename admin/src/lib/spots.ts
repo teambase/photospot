@@ -16,6 +16,14 @@ export async function setSpotStatus(spotId: string, status: SpotStatus): Promise
   await updateDoc(doc(db, SPOTS_COLLECTION, spotId), { status });
 }
 
+export async function setSpotsStatus(spotIds: string[], status: SpotStatus): Promise<void> {
+  const batch = writeBatch(db);
+  for (const id of spotIds) {
+    batch.update(doc(db, SPOTS_COLLECTION, id), { status });
+  }
+  await batch.commit();
+}
+
 /** RN 앱의 data/mockSpots.ts 스냅샷을 Firestore로 최초 1회 이관한다. 문서 id = spot id로 덮어쓴다. */
 export async function seedSpotsFromMock(): Promise<number> {
   const batch = writeBatch(db);

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../lib/firebase';
-import { seedSpotsFromMock, setSpotStatus, subscribeToSpots } from '../lib/spots';
+import { seedSpotsFromMock, setSpotStatus, setSpotsStatus, subscribeToSpots } from '../lib/spots';
 import type { Spot, SpotStatus } from '../types';
 
 const TABS: { id: SpotStatus; label: string }[] = [
@@ -16,6 +16,8 @@ export function SpotDashboard({ email }: { email: string }) {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [seeding, setSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState<string | undefined>();
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkApproving, setBulkApproving] = useState(false);
 
   useEffect(() => subscribeToSpots(setSpots), []);
 
@@ -35,12 +37,42 @@ export function SpotDashboard({ email }: { email: string }) {
 
   const visibleSpots = useMemo(() => spots.filter((s) => s.status === tab), [spots, tab]);
 
+  const changeTab = (next: SpotStatus) => {
+    setTab(next);
+    setSelectedIds(new Set());
+  };
+
+  const toggleSelected = (spotId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(spotId)) next.delete(spotId);
+      else next.add(spotId);
+      return next;
+    });
+  };
+
+  const allVisibleSelected = visibleSpots.length > 0 && visibleSpots.every((s) => selectedIds.has(s.id));
+
+  const toggleSelectAll = () => {
+    setSelectedIds(allVisibleSelected ? new Set() : new Set(visibleSpots.map((s) => s.id)));
+  };
+
   const handleSetStatus = async (spotId: string, status: SpotStatus) => {
     setUpdatingId(spotId);
     try {
       await setSpotStatus(spotId, status);
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleBulkApprove = async () => {
+    setBulkApproving(true);
+    try {
+      await setSpotsStatus([...selectedIds], 'approved');
+      setSelectedIds(new Set());
+    } finally {
+      setBulkApproving(false);
     }
   };
 
@@ -69,16 +101,38 @@ export function SpotDashboard({ email }: { email: string }) {
           <button
             key={t.id}
             className={t.id === tab ? 'tab active' : 'tab'}
-            onClick={() => setTab(t.id)}
+            onClick={() => changeTab(t.id)}
           >
             {t.label} ({spots.filter((s) => s.status === t.id).length})
           </button>
         ))}
       </nav>
 
+      {tab === 'pending' && visibleSpots.length > 0 && (
+        <div className="bulk-bar">
+          <span>{selectedIds.size}개 선택됨</span>
+          <button
+            disabled={selectedIds.size === 0 || bulkApproving}
+            onClick={handleBulkApprove}
+          >
+            {bulkApproving ? '승인 처리 중...' : `선택 항목 일괄 승인 (${selectedIds.size})`}
+          </button>
+        </div>
+      )}
+
       <table className="spot-table">
         <thead>
           <tr>
+            {tab === 'pending' && (
+              <th>
+                <input
+                  type="checkbox"
+                  checked={allVisibleSelected}
+                  onChange={toggleSelectAll}
+                  aria-label="전체 선택"
+                />
+              </th>
+            )}
             <th>이름</th>
             <th>지역</th>
             <th>테마</th>
@@ -89,6 +143,16 @@ export function SpotDashboard({ email }: { email: string }) {
         <tbody>
           {visibleSpots.map((spot) => (
             <tr key={spot.id}>
+              {tab === 'pending' && (
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(spot.id)}
+                    onChange={() => toggleSelected(spot.id)}
+                    aria-label={`${spot.name} 선택`}
+                  />
+                </td>
+              )}
               <td>{spot.name}</td>
               <td>{spot.region}</td>
               <td>{spot.themes.join(', ')}</td>
@@ -123,7 +187,7 @@ export function SpotDashboard({ email }: { email: string }) {
           ))}
           {visibleSpots.length === 0 && (
             <tr>
-              <td colSpan={5} className="empty">
+              <td colSpan={tab === 'pending' ? 6 : 5} className="empty">
                 표시할 스팟이 없습니다.
               </td>
             </tr>

@@ -49,6 +49,32 @@
   font-size: 14px;
 }
 
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #eef4ff;
+  border: 1px solid #c7dbff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.bulk-bar button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+}
+
+.bulk-bar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .tabs {
   display: flex;
   gap: 8px;
