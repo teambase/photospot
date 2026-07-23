@@ -18,7 +18,9 @@ interface Props {
 
 export function SpotDetailSheet({ spot, weather }: Props) {
   const score = weather ? scoreWeather(weather) : null;
-  const cameraSetting = getCameraSettings(spot.themes[0], weather)[0];
+  const cameraSetting = spot.themes[0]
+    ? getCameraSettings(spot.themes[0], weather)[0]
+    : undefined;
 
   return (
     <BottomSheetView style={styles.container}>

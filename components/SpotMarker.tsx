@@ -2,7 +2,7 @@ import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NaverMapMarkerOverlay } from '@mj-studio/react-native-naver-map';
 import type { Spot } from '../types/spot';
-import { getThemeMeta } from '../constants/themes';
+import { getPrimaryThemeMeta } from '../constants/themes';
 import { colors } from '../constants/colors';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function SpotMarker({ spot, onTap }: Props) {
-  const theme = getThemeMeta(spot.themes[0]);
+  const theme = getPrimaryThemeMeta(spot.themes);
 
   return (
     <NaverMapMarkerOverlay

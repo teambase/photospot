@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEMES } from '../../constants/themes';
 import { usePreferenceStore } from '../../store/preferenceStore';
 import { requestGeofencePermissions, syncGeofences } from '../../lib/geofencing';
-import { getApprovedSpots } from '../../data/mockSpots';
+import { useApprovedSpots } from '../../lib/spotsQueries';
 import { colors } from '../../constants/colors';
 import { spacing, fontSize, radius as radiusToken } from '../../constants/typography';
 
@@ -22,7 +22,9 @@ export default function SettingsScreen() {
   } = usePreferenceStore();
   const [syncing, setSyncing] = useState(false);
 
-  const subscribedSpotIds = getApprovedSpots()
+  const { data: approvedSpots = [] } = useApprovedSpots();
+
+  const subscribedSpotIds = approvedSpots
     .filter((s) => s.themes.some((t) => subscribedThemes.includes(t)))
     .map((s) => s.id);
 

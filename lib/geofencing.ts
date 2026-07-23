@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Notifications from 'expo-notifications';
-import { getApprovedSpots } from '../data/mockSpots';
+import { fetchApprovedSpots, fetchSpotById } from './spotsRepo';
 import { MOCK_WEATHER } from '../data/mockWeather';
 
 export const GEOFENCE_TASK = 'photospot-geofence-task';
@@ -23,7 +23,7 @@ TaskManager.defineTask(GEOFENCE_TASK, async ({ data, error }) => {
   };
   if (eventType !== Location.GeofencingEventType.Enter || !region.identifier) return;
 
-  const spot = getApprovedSpots().find((s) => s.id === region.identifier);
+  const spot = await fetchSpotById(region.identifier);
   const weather = spot ? MOCK_WEATHER[spot.id] : undefined;
   if (!spot) return;
 
@@ -49,7 +49,7 @@ export async function requestGeofencePermissions(): Promise<boolean> {
 export const MAX_GEOFENCES = 20;
 
 export async function syncGeofences(spotIds: string[], radiusMeters: number) {
-  const approvedSpots = getApprovedSpots();
+  const approvedSpots = await fetchApprovedSpots();
   const regions: Location.LocationRegion[] = spotIds
     .slice(0, MAX_GEOFENCES)
     .map((id) => approvedSpots.find((s) => s.id === id))

@@ -5,7 +5,7 @@ import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
-import { getApprovedSpots } from '../../data/mockSpots';
+import { useApprovedSpots } from '../../lib/spotsQueries';
 import { MOCK_WEATHER } from '../../data/mockWeather';
 import { THEMES } from '../../constants/themes';
 import { useMapFilterStore } from '../../store/mapFilterStore';
@@ -17,8 +17,8 @@ import { spacing, fontSize } from '../../constants/typography';
 import type { Spot } from '../../types/spot';
 
 const SEOUL_CAMERA = { latitude: 36.5, longitude: 127.8, zoom: 6.4 };
-// 스케일바가 정확히 "5km"로 표시되는 줌 레벨 (시뮬레이터 실측 확인).
-const SCALE_5KM_ZOOM = 10;
+// 스케일바가 정확히 "1km"로 표시되는 줌 레벨 (시뮬레이터 실측 확인).
+const SCALE_1KM_ZOOM = 12;
 const NAVER_MAP_CLIENT_ID = Constants.expoConfig?.extra?.naverMapClientId ?? '';
 
 export default function MapScreen() {
@@ -29,11 +29,12 @@ export default function MapScreen() {
   const mapReadyRef = useRef(false);
   const userLocationRef = useRef<{ latitude: number; longitude: number } | null>(null);
 
+  const { data: approvedSpots = [] } = useApprovedSpots();
+
   const visibleSpots = useMemo(() => {
-    const approvedSpots = getApprovedSpots();
     if (activeThemes.length === 0) return approvedSpots;
     return approvedSpots.filter((s) => s.themes.some((t) => activeThemes.includes(t)));
-  }, [activeThemes]);
+  }, [approvedSpots, activeThemes]);
 
   const openSpot = useCallback((spot: Spot) => {
     setSelectedSpot(spot);
@@ -46,7 +47,7 @@ export default function MapScreen() {
     mapRef.current?.animateCameraTo({
       latitude: loc.latitude,
       longitude: loc.longitude,
-      zoom: SCALE_5KM_ZOOM,
+      zoom: SCALE_1KM_ZOOM,
     });
   }, []);
 

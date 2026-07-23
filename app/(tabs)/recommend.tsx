@@ -3,7 +3,7 @@ import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getApprovedSpots } from '../../data/mockSpots';
+import { useApprovedSpots } from '../../lib/spotsQueries';
 import { MOCK_WEATHER } from '../../data/mockWeather';
 import { THEMES } from '../../constants/themes';
 import { ThemeChip } from '../../components/ThemeChip';
@@ -43,8 +43,10 @@ export default function RecommendScreen() {
     );
   };
 
+  const { data: approvedSpots = [] } = useApprovedSpots();
+
   const results = useMemo(() => {
-    return getApprovedSpots().map((spot) => {
+    return approvedSpots.map((spot) => {
       const weather = MOCK_WEATHER[spot.id];
       const dist = distanceKm(origin.lat, origin.lng, spot.lat, spot.lng);
       const score = weather ? scoreWeather(weather) : null;
@@ -57,7 +59,7 @@ export default function RecommendScreen() {
           r.spot.themes.some((t) => activeThemes.includes(t))
       )
       .sort((a, b) => (b.score?.score ?? 0) - (a.score?.score ?? 0));
-  }, [origin, radiusKm, activeThemes]);
+  }, [approvedSpots, origin, radiusKm, activeThemes]);
 
   return (
     <SafeAreaView style={styles.flex} edges={['top']}>

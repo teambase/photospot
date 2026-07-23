@@ -1,7 +1,7 @@
 import { Pressable, View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import type { Spot, WeatherSnapshot } from '../types/spot';
-import { getThemeMeta } from '../constants/themes';
+import { getPrimaryThemeMeta } from '../constants/themes';
 import { scoreWeather } from '../lib/recommendation';
 import { ScoreBadge } from './ScoreBadge';
 import { colors } from '../constants/colors';
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function SpotCard({ spot, weather, distanceKm, onPress }: Props) {
-  const primaryTheme = getThemeMeta(spot.themes[0]);
+  const primaryTheme = getPrimaryThemeMeta(spot.themes);
   const score = weather ? scoreWeather(weather) : null;
 
   return (
