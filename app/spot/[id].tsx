@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSpot } from '../../lib/spotsQueries';
-import { MOCK_WEATHER } from '../../data/mockWeather';
+import { useWeather } from '../../lib/weatherQueries';
 import { getThemeMeta } from '../../constants/themes';
 import { scoreWeather } from '../../lib/recommendation';
 import { getCameraSettings } from '../../lib/cameraSettings';
@@ -16,7 +16,7 @@ import { spacing, fontSize, radius } from '../../constants/typography';
 export default function SpotDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: spot, isLoading } = useSpot(id);
-  const weather = spot ? MOCK_WEATHER[spot.id] : undefined;
+  const { data: weather } = useWeather(spot);
 
   if (isLoading) {
     return <SafeAreaView style={styles.center} />;

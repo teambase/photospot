@@ -2,7 +2,7 @@ import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import * as Notifications from 'expo-notifications';
 import { fetchApprovedSpots, fetchSpotById } from './spotsRepo';
-import { MOCK_WEATHER } from '../data/mockWeather';
+import { fetchWeatherSnapshot } from './weatherRepo';
 
 export const GEOFENCE_TASK = 'photospot-geofence-task';
 
@@ -24,8 +24,8 @@ TaskManager.defineTask(GEOFENCE_TASK, async ({ data, error }) => {
   if (eventType !== Location.GeofencingEventType.Enter || !region.identifier) return;
 
   const spot = await fetchSpotById(region.identifier);
-  const weather = spot ? MOCK_WEATHER[spot.id] : undefined;
   if (!spot) return;
+  const weather = await fetchWeatherSnapshot(spot).catch(() => undefined);
 
   const body = weather
     ? `여기는 ${spot.name}입니다. 오늘 일몰 ${weather.sunsetTime}, 구름량 ${weather.cloudCoverPercent}%로 촬영하기 좋은 편입니다.`

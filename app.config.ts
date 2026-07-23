@@ -2,6 +2,9 @@ import 'dotenv/config';
 import type { ExpoConfig } from 'expo/config';
 
 const NAVER_MAP_CLIENT_ID = process.env.NAVER_MAP_CLIENT_ID ?? '';
+const KMA_API_KEY = process.env.KMA_API_KEY ?? '';
+const KASI_API_KEY = process.env.KASI_API_KEY ?? '';
+const AIRKOREA_API_KEY = process.env.AIRKOREA_API_KEY ?? '';
 
 const FIREBASE_CONFIG = {
   apiKey: process.env.FIREBASE_API_KEY ?? '',
@@ -79,6 +82,9 @@ const config: ExpoConfig = {
   extra: {
     naverMapClientId: NAVER_MAP_CLIENT_ID,
     firebaseConfig: FIREBASE_CONFIG,
+    kmaApiKey: KMA_API_KEY,
+    kasiApiKey: KASI_API_KEY,
+    airkoreaApiKey: AIRKOREA_API_KEY,
   },
 };
 

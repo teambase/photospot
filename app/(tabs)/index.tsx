@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import { useApprovedSpots } from '../../lib/spotsQueries';
-import { MOCK_WEATHER } from '../../data/mockWeather';
+import { useWeather } from '../../lib/weatherQueries';
 import { THEMES } from '../../constants/themes';
 import { useMapFilterStore } from '../../store/mapFilterStore';
 import { ThemeChip } from '../../components/ThemeChip';
@@ -30,6 +30,7 @@ export default function MapScreen() {
   const userLocationRef = useRef<{ latitude: number; longitude: number } | null>(null);
 
   const { data: approvedSpots = [] } = useApprovedSpots();
+  const { data: selectedSpotWeather } = useWeather(selectedSpot);
 
   const visibleSpots = useMemo(() => {
     if (activeThemes.length === 0) return approvedSpots;
@@ -112,7 +113,7 @@ export default function MapScreen() {
         )}
       >
         {selectedSpot && (
-          <SpotDetailSheet spot={selectedSpot} weather={MOCK_WEATHER[selectedSpot.id]} />
+          <SpotDetailSheet spot={selectedSpot} weather={selectedSpotWeather} />
         )}
       </BottomSheetModal>
     </View>

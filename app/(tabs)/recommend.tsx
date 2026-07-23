@@ -4,7 +4,7 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApprovedSpots } from '../../lib/spotsQueries';
-import { MOCK_WEATHER } from '../../data/mockWeather';
+import { useWeatherMap } from '../../lib/weatherQueries';
 import { THEMES } from '../../constants/themes';
 import { ThemeChip } from '../../components/ThemeChip';
 import { SpotCard } from '../../components/SpotCard';
@@ -44,10 +44,11 @@ export default function RecommendScreen() {
   };
 
   const { data: approvedSpots = [] } = useApprovedSpots();
+  const weatherMap = useWeatherMap(approvedSpots);
 
   const results = useMemo(() => {
     return approvedSpots.map((spot) => {
-      const weather = MOCK_WEATHER[spot.id];
+      const weather = weatherMap.get(spot.id);
       const dist = distanceKm(origin.lat, origin.lng, spot.lat, spot.lng);
       const score = weather ? scoreWeather(weather) : null;
       return { spot, weather, dist, score };
@@ -59,7 +60,7 @@ export default function RecommendScreen() {
           r.spot.themes.some((t) => activeThemes.includes(t))
       )
       .sort((a, b) => (b.score?.score ?? 0) - (a.score?.score ?? 0));
-  }, [approvedSpots, origin, radiusKm, activeThemes]);
+  }, [approvedSpots, weatherMap, origin, radiusKm, activeThemes]);
 
   return (
     <SafeAreaView style={styles.flex} edges={['top']}>

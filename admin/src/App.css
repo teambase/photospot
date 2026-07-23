@@ -22,7 +22,7 @@
 }
 
 .dashboard {
-  max-width: 960px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 24px;
 }
@@ -107,7 +107,12 @@
   border-bottom: 1px solid #eee;
 }
 
+.spot-table .actions {
+  white-space: nowrap;
+}
+
 .spot-table .actions button {
+  display: inline-block;
   margin-right: 6px;
   padding: 6px 10px;
   border-radius: 6px;
