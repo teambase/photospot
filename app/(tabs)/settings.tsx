@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Switch, Pressable, ScrollView, Alert, StyleSheet } from 'react-native';
+import { View, Text, Switch, Pressable, ScrollView, Alert, Linking, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { THEMES } from '../../constants/themes';
@@ -28,11 +28,33 @@ export default function SettingsScreen() {
     .filter((s) => s.themes.some((t) => subscribedThemes.includes(t)))
     .map((s) => s.id);
 
+  const explainMissingPermission = (result: Awaited<ReturnType<typeof requestGeofencePermissions>>) => {
+    if (!result.foreground || !result.background) {
+      Alert.alert(
+        '위치 권한 필요',
+        !result.foreground
+          ? '설정에서 위치 접근을 허용해주세요.'
+          : '지오펜싱 알림은 백그라운드에서도 위치를 확인해야 해서, "앱 사용 중"이 아니라 "항상" 허용이 필요합니다.\n\n설정 > 포토스팟 > 위치를 "항상"으로 바꿔주세요.',
+        [
+          { text: '취소', style: 'cancel' },
+          { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+        ]
+      );
+      return;
+    }
+    if (!result.notifications) {
+      Alert.alert('알림 권한 필요', '설정에서 알림을 허용해주세요.', [
+        { text: '취소', style: 'cancel' },
+        { text: '설정으로 이동', onPress: () => Linking.openSettings() },
+      ]);
+    }
+  };
+
   const handleToggleNotifications = async (value: boolean) => {
     if (value) {
-      const granted = await requestGeofencePermissions();
-      if (!granted) {
-        Alert.alert('권한 필요', '위치 및 알림 권한을 허용해야 지오펜싱 알림을 받을 수 있습니다.');
+      const result = await requestGeofencePermissions();
+      if (!result.granted) {
+        explainMissingPermission(result);
         return;
       }
     }
@@ -41,9 +63,9 @@ export default function SettingsScreen() {
 
   const handleSync = async () => {
     if (notificationEnabled) {
-      const granted = await requestGeofencePermissions();
-      if (!granted) {
-        Alert.alert('권한 필요', '위치 및 알림 권한을 허용해야 지오펜싱 알림을 받을 수 있습니다.');
+      const result = await requestGeofencePermissions();
+      if (!result.granted) {
+        explainMissingPermission(result);
         return;
       }
     }
