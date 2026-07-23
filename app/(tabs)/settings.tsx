@@ -40,6 +40,14 @@ export default function SettingsScreen() {
   };
 
   const handleSync = async () => {
+    if (notificationEnabled) {
+      const granted = await requestGeofencePermissions();
+      if (!granted) {
+        Alert.alert('권한 필요', '위치 및 알림 권한을 허용해야 지오펜싱 알림을 받을 수 있습니다.');
+        return;
+      }
+    }
+
     setSyncing(true);
     try {
       await syncGeofences(
@@ -47,6 +55,8 @@ export default function SettingsScreen() {
         geofenceRadiusMeters
       );
       Alert.alert('완료', `${subscribedSpotIds.length}개 스팟의 지오펜스가 동기화되었습니다.`);
+    } catch (err) {
+      Alert.alert('동기화 실패', err instanceof Error ? err.message : String(err));
     } finally {
       setSyncing(false);
     }
