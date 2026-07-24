@@ -44,23 +44,30 @@ export default function RecommendScreen() {
   };
 
   const { data: approvedSpots = [] } = useApprovedSpots();
-  const weatherMap = useWeatherMap(approvedSpots);
+
+  // 반경/테마로 먼저 걸러낸 스팟만 날씨를 조회한다 — 승인된 스팟이 많아져도
+  // 화면에 실제로 표시될 것들만 API를 호출하도록 하기 위함.
+  const filteredSpots = useMemo(() => {
+    return approvedSpots
+      .map((spot) => ({ spot, dist: distanceKm(origin.lat, origin.lng, spot.lat, spot.lng) }))
+      .filter(({ dist }) => dist <= radiusKm)
+      .filter(
+        ({ spot }) =>
+          activeThemes.length === 0 || spot.themes.some((t) => activeThemes.includes(t))
+      );
+  }, [approvedSpots, origin, radiusKm, activeThemes]);
+
+  const weatherMap = useWeatherMap(useMemo(() => filteredSpots.map((f) => f.spot), [filteredSpots]));
 
   const results = useMemo(() => {
-    return approvedSpots.map((spot) => {
-      const weather = weatherMap.get(spot.id);
-      const dist = distanceKm(origin.lat, origin.lng, spot.lat, spot.lng);
-      const score = weather ? scoreWeather(weather) : null;
-      return { spot, weather, dist, score };
-    })
-      .filter((r) => r.dist <= radiusKm)
-      .filter(
-        (r) =>
-          activeThemes.length === 0 ||
-          r.spot.themes.some((t) => activeThemes.includes(t))
-      )
+    return filteredSpots
+      .map(({ spot, dist }) => {
+        const weather = weatherMap.get(spot.id);
+        const score = weather ? scoreWeather(weather) : null;
+        return { spot, weather, dist, score };
+      })
       .sort((a, b) => (b.score?.score ?? 0) - (a.score?.score ?? 0));
-  }, [approvedSpots, weatherMap, origin, radiusKm, activeThemes]);
+  }, [filteredSpots, weatherMap]);
 
   return (
     <SafeAreaView style={styles.flex} edges={['top']}>
