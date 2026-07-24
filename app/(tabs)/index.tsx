@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import { useApprovedSpots } from '../../lib/spotsQueries';
 import { useWeather } from '../../lib/weatherQueries';
 import { THEMES } from '../../constants/themes';
-import { useMapFilterStore } from '../../store/mapFilterStore';
+import { usePreferenceStore } from '../../store/preferenceStore';
 import { ThemeChip } from '../../components/ThemeChip';
 import { SpotMarker } from '../../components/SpotMarker';
 import { SpotDetailSheet } from '../../components/SpotDetailSheet';
@@ -22,7 +22,7 @@ const SCALE_1KM_ZOOM = 12;
 const NAVER_MAP_CLIENT_ID = Constants.expoConfig?.extra?.naverMapClientId ?? '';
 
 export default function MapScreen() {
-  const { activeThemes, toggleTheme } = useMapFilterStore();
+  const { subscribedThemes: activeThemes, toggleTheme } = usePreferenceStore();
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const sheetRef = useRef<BottomSheetModal>(null);
   const mapRef = useRef<NaverMapViewRef>(null);
