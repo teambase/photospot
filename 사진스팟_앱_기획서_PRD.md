@@ -24,7 +24,7 @@
 | 스팟 발굴 소스 | ✅ 확정 및 **실행 완료** — `collector/`로 data.go.kr 전국관광지정보표준데이터 총 852건(1차 50건 + 추가 802건)을 `pending`으로 적재, 재실행 시 중복 방지(멱등) 확인. TourAPI는 신청 진행 중 |
 | 스팟 노출 승인 워크플로우 | ✅ **완료** — RN 앱이 `data/mockSpots.ts`(삭제됨) 대신 Firestore를 직접 쿼리(`lib/spotsRepo.ts` + TanStack Query), 승인된 스팟만 지도·추천·지오펜싱에 노출됨을 시뮬레이터로 확인 |
 | 전국 스팟 확장 | 🟡 진행 중 — 수기 31곳(승인됨) + data.go.kr 852건(대부분 대기중, 일부 승인 테스트됨). 관리자 검토·승인이 다음 병목 |
-| 실 서비스(프로덕션) 배포 | ✅ 10.1(실기기 테스트 배포) 완료 — Apple Developer Program 승인, EAS Build(`preview`, 애드혹)로 아이폰 설치 및 지오펜싱 권한 버그 수정까지 실기기 확인. 10.2(정식 전환)는 계획 단계로 보류 (10장 참고) |
+| 실 서비스(프로덕션) 배포 | 🟡 진행 중 — 10.1(앱 실기기 테스트 배포) 완료. 10.2 중 관리시스템 Firebase Hosting 배포 **완료**(https://photospot-1d9e6.web.app). 앱스토어 정식 배포·collector 스케줄 전환은 계획 단계 (10장 참고) |
 | 추천 화면 성능 | ✅ 개선 — 반경/테마로 먼저 거른 스팟만 날씨를 조회하도록 순서 변경(`app/(tabs)/recommend.tsx`). 승인 스팟이 늘어나도 화면에 실제 표시될 만큼만 API 호출 |
 
 ---
@@ -185,7 +185,7 @@ v1은 규칙 테이블 기반으로 시작하고, 추후 사용자 촬영 데이
 6. ~~지오펜싱 등록 로직이 Firestore 기준으로 동작하는지 회귀 확인~~ ✅ 완료 — 시뮬레이터에서 설정 화면이 실제 승인 스팟 수(11곳)를 정확히 계산함을 확인. 이 과정에서 버그 발견·수정: `notificationEnabled`가 실제 권한 요청 없이 기본값 `true`였던 탓에 동기화 버튼이 권한 체크 없이 `startGeofencingAsync`를 호출해 `DeniedBackgroundLocationPermission`으로 크래시 — 기본값을 `false`로 바꾸고 `handleSync`에 권한 확인·에러 처리 추가
 7. ~~기상청/천문연구원/에어코리아 API 연동~~ ✅ **완료** — 3개 API 전부 발급·연동·실데이터 검증 완료 (아래 상세)
 8. 실기기 지오펜싱 배터리·정확도 테스트 🟡 부분 완료 — Apple Developer Program 승인, EAS Build로 아이폰 설치, **권한 요청 플로우 버그 수정까지 실기기에서 확인 완료** (아래 상세). 장기 배터리 소모·정확도 실측은 지금 검증하기 어려워 **보류**
-9. **(신규)** 실 서비스(프로덕션) 배포 — 10장 참고. **10.1(실기기 테스트 배포)은 완료, 10.2(정식 전환)는 계획만 지속 수립**
+9. **(신규)** 실 서비스(프로덕션) 배포 — 10장 참고. **10.1(실기기 테스트 배포) 완료, 10.2 중 관리시스템 Firebase Hosting 배포 완료, 나머지(앱스토어·collector 스케줄)는 계획만 지속 수립**
 
 **7번 진행 중 발견·해결한 이슈 2가지:**
 - React Native(Hermes)엔 `URLSearchParams`가 기본 제공되지 않아 세 API 클라이언트가 조용히 실패하고 있었음 — `lib/queryString.ts`(직접 구현한 쿼리스트링 빌더)로 교체해 해결
@@ -239,13 +239,13 @@ git(GitHub `teambase/photospot`)은 소스 보관용일 뿐, 실제로 서비스
 
 사용자가 오늘 실기기에서 기능 검증 진행 중, 결과(버그·수정사항)는 다음 세션에 정리해서 전달 예정.
 
-### 10.2 정식 서비스 전환 (계획 단계 — 착수 보류)
+### 10.2 정식 서비스 전환
 
-| 컴포넌트 | 배포 대상(안) | 비고 |
+| 컴포넌트 | 배포 대상 | 상태 |
 |---|---|---|
-| 모바일 앱 (`app/`, RN+Expo) | EAS Build/Submit → App Store·Google Play | 10.1의 Apple Developer Program 가입이 선행되면 그대로 정식 배포로 이어짐. 스토어 심사(백그라운드 위치 권한은 심사 까다로운 편) 필요 |
-| 관리시스템 (`admin/`) | Firebase Hosting | 이미 같은 Firebase 프로젝트를 쓰므로 `firebase deploy` 한 번으로 연결 가능. Vercel/Netlify도 대안이지만 우선순위 낮음 |
-| 수집 배치 (`collector/`) | Firebase Cloud Functions **예약(스케줄) 트리거** | 지금처럼 로컬에서 수동 실행하는 대신, 주기적으로 자동 수집되도록 전환. 원래 PRD(6장 초안)에서도 Cloud Functions로 공공데이터 배치 수집을 제안했었음 |
+| 모바일 앱 (`app/`, RN+Expo) | EAS Build/Submit → App Store·Google Play | ⬜ 계획 단계. 10.1의 Apple Developer Program 가입이 선행되면 그대로 정식 배포로 이어짐. 스토어 심사(백그라운드 위치 권한은 심사 까다로운 편) 필요 |
+| 관리시스템 (`admin/`) | Firebase Hosting | ✅ **완료(2026-07-24)** — https://photospot-1d9e6.web.app 로 배포됨. 로컬 서버 없이 바로 접속 가능. 재배포: `cd admin && npm run build && cd .. && firebase deploy --only hosting`. 저장소 루트에 `firebase.json`/`.firebaserc` 추가함 |
+| 수집 배치 (`collector/`) | Firebase Cloud Functions **예약(스케줄) 트리거** | ⬜ 계획 단계 — 지금처럼 로컬에서 수동 실행하는 대신, 주기적으로 자동 수집되도록 전환. 원래 PRD(6장 초안)에서도 Cloud Functions로 공공데이터 배치 수집을 제안했었음 |
 | 백엔드(Firestore/Auth) | 변경 없음 | 이미 Firebase 관리형 서비스라 별도 배포 불필요 |
 
 **실 서비스 전환 시 추가로 검토해야 할 것** (2026-07-22 대화에서 논의, 아직 미착수):
